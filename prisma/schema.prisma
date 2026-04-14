@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum Status {
+  PENDING
+  IN_PROGRESS
+  REVIEW
+  REVISION
+  DONE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String?
+  companyName  String?
+  role         Role     @default(CLIENT)
+  tickets      Ticket[]
+  createdAt    DateTime @default(now())
+}
+
+model Category {
+  id      Int      @id @default(autoincrement())
+  name    String
+  tickets Ticket[]
+}
+
+model Ticket {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  status         Status   @default(PENDING)
+  priority       String   @default("MEDIUM")
+  referenceLinks String[]
+  clientId       String
+  client         User     @relation(fields: [clientId], references: [id])
+  categoryId     Int
+  category       Category @relation(fields: [categoryId], references: [id])
+  assets         Asset[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Asset {
+  id        String   @id @default(uuid())
+  fileName  String
+  fileUrl   String
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  createdAt DateTime @default(now())
+}
