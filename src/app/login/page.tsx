@@ -97,6 +97,7 @@ export default function LoginPage() {
                 <Input 
                   id="email"
                   type="email" 
+                  autoComplete="on"
                   onChange={(e) => setEmail(e.target.value)} 
                   required 
                   disabled={isLoading}

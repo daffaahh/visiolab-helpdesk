@@ -1,10 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
-import { Pool } from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { prisma } from "@/src/lib/prisma";
+import bcrypt from "bcryptjs"; // <-- LOGIC FORTRESS: Wajib import bcrypt
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -26,29 +24,35 @@ const handler = NextAuth({
           return null;
         }
 
-        // Cari client di Database
+        // Cari user di Database
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
         });
 
-        // MVP Logic: Selama email ada di DB dan password "password123", tembusin.
-        // Nanti kalau udah mau production, baru kita pasang bcrypt buat hash password.
-        if (user && credentials.password === "password123") {
+        // Kalau email ga ketemu di DB
+        if (!user) {
+          return null;
+        }
+
+        // LOGIC FORTRESS: Cek kecocokan password input dengan hash di Database
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+
+        if (isPasswordValid) {
           return { 
             id: user.id, 
             email: user.email, 
             name: user.name, 
-            role: user.role // Passing role biar ketahuan dia ADMIN atau CLIENT
+            role: user.role // Passing role biar ketahuan dia ADMIN, STAFF, atau CLIENT
           };
         }
         
-        // Kalau email ga ada / password salah
+        // Kalau password salah
         return null;
       }
     })
   ],
   callbacks: {
-    // Inject Role ke dalam Token & Session biar bisa dibaca Middleware & UI
+    // Inject Role & ID ke dalam Token & Session biar bisa dibaca Middleware & UI
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role;
