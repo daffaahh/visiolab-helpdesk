@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 // Sesuaikan path import UI components lo
+import { AnimatedBackground } from "@/src/components/ui/animated-background";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Card, CardContent, CardHeader, CardDescription } from "@/src/components/ui/card";
@@ -55,6 +56,8 @@ export default function LoginPage() {
     return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950 p-4">
       
+      <AnimatedBackground />
+
       {/* Subtle ambient glow effect in the background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
 
