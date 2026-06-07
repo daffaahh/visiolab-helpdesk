@@ -1,73 +1,7 @@
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@/src/lib/prisma";
-import bcrypt from "bcryptjs"; // <-- LOGIC FORTRESS: Wajib import bcrypt
+import { authOptions } from "@/src/lib/auth";
 
-const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  session: {
-    strategy: "jwt", // Wajib JWT kalau pake Credentials
-  },
-  pages: {
-    signIn: "/login", // Redirect ke page custom kita kalau belum login
-  },
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
-        // Cari user di Database
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
-        });
-
-        // Kalau email ga ketemu di DB
-        if (!user) {
-          return null;
-        }
-
-        // LOGIC FORTRESS: Cek kecocokan password input dengan hash di Database
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-
-        if (isPasswordValid) {
-          return { 
-            id: user.id, 
-            email: user.email, 
-            name: user.name, 
-            role: user.role // Passing role biar ketahuan dia ADMIN, STAFF, atau CLIENT
-          };
-        }
-        
-        // Kalau password salah
-        return null;
-      }
-    })
-  ],
-  callbacks: {
-    // Inject Role & ID ke dalam Token & Session biar bisa dibaca Middleware & UI
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = (user as any).role;
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        (session.user as any).role = token.role;
-        (session.user as any).id = token.id;
-      }
-      return session;
-    }
-  }
-});
+// Config dipindah ke src/lib/auth.ts biar bisa dipakai ulang di Server Action
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

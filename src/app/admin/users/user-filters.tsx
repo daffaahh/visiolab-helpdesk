@@ -55,7 +55,7 @@ export function UserFilters() {
           placeholder="Search name, email, or company..."
           defaultValue={searchParams.get("q")?.toString()}
           onChange={(e) => handleSearch(e.target.value)}
-          className="pl-9 border-slate-200 focus:border-blue-500 w-full bg-white shadow-sm"
+          className="pl-9 border-slate-200 focus:border-blue-500 w-full bg-white shadow-sm text-slate-900 placeholder:text-slate-500"
         />
       </div>
 
@@ -63,7 +63,7 @@ export function UserFilters() {
       <select
         defaultValue={searchParams.get("role")?.toString() || "ALL"}
         onChange={(e) => handleRoleFilter(e.target.value)}
-        className="w-full sm:w-40 h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm outline-none transition-all"
+        className="w-full sm:w-40 h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm outline-none transition-all"
       >
         <option value="ALL">All Roles</option>
         <option value="ADMIN">Admin</option>

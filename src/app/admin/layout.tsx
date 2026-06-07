@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, Ticket, Users, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
+
+import { SidebarNav } from "./sidebar-nav";
 
 // Pastiin path dan nama file logo putih lo bener
 import VisiolabLogo from "@/public/images/visiolab_logo.png";
@@ -24,23 +26,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
            </span>
          </div>
          
-         {/* Navigation */}
-         <nav className="flex-1 py-6 px-4 space-y-2">
-           <Link href="/admin/dashboard" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg bg-slate-800 text-white transition-all">
-             <LayoutDashboard className="mr-3 h-5 w-5 text-blue-400" />
-             Dashboard
-           </Link>
-           
-           <Link href="/admin/tickets" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
-             <Ticket className="mr-3 h-5 w-5" />
-             Tickets
-           </Link>
-
-           <Link href="/admin/users" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
-             <Users className="mr-3 h-5 w-5" />
-             Users
-           </Link>
-         </nav>
+         {/* Navigation (active state dinamis) */}
+         <SidebarNav />
 
          {/* Logout */}
           <div className="p-4 border-t border-slate-800">

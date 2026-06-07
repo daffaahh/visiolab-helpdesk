@@ -183,7 +183,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={isLoading} className="h-12 px-8 text-base font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-xl hover:shadow-2xl transition duration-150 rounded-xl">
+            <Button type="submit" disabled={isLoading} className="h-12 px-8 text-base font-semibold bg-[#020618] hover:bg-[#020618]/90 text-white shadow-xl hover:shadow-2xl transition duration-150 rounded-xl">
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               {isLoading ? "Updating..." : "Save Changes"}
             </Button>

@@ -13,6 +13,7 @@ enum Role {
 }
 
 enum Status {
+  DRAFT
   PENDING
   IN_PROGRESS
   REVIEW
@@ -42,27 +43,49 @@ model Category {
   tickets Ticket[]
 }
 
+// HEADER: data ringkas tiket (dipakai buat listing & dashboard)
 model Ticket {
+  id         String        @id @default(uuid())
+  title      String
+  status     Status        @default(PENDING)
+  priority   String        @default("MEDIUM")
+  clientId   String
+  client     User          @relation(fields: [clientId], references: [id])
+  categoryId Int
+  category   Category      @relation(fields: [categoryId], references: [id])
+  detail     TicketDetail? // <-- Relasi 1-ke-1 ke konten/detail
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  // Index buat query yang sering: filter status (dashboard) & join FK
+  @@index([status])
+  @@index([clientId])
+  @@index([categoryId])
+}
+
+// KONTEN: detail berat tiket, dipisah dari header (1-ke-1 dengan Ticket).
+// Field umum dipegang kolom eksplisit; field spesifik per kategori
+// (mis. resolusi video, dimensi desain, dsb) ditampung di customFields (JSONB).
+model TicketDetail {
   id             String   @id @default(uuid())
-  title          String
+  ticketId       String   @unique
+  ticket         Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   description    String
-  status         Status   @default(PENDING)
-  priority       String   @default("MEDIUM")
   referenceLinks String[]
-  clientId       String
-  client         User     @relation(fields: [clientId], references: [id])
-  categoryId     Int
-  category       Category @relation(fields: [categoryId], references: [id])
+  customFields   Json? // <-- field dinamis sesuai category masing-masing
+  outputLinks    String[]  @default([]) // hasil kerjaan (link drive) dari tim
+  revisionNote   String? // catatan revisi terakhir dari client
+  revisionAsset  String? // link aset pendukung revisi dari client
   assets         Asset[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Asset {
-  id        String   @id @default(uuid())
-  fileName  String
-  fileUrl   String
-  ticketId  String
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
-  createdAt DateTime @default(now())
+  id             String       @id @default(uuid())
+  fileName       String
+  fileUrl        String
+  ticketDetailId String
+  ticketDetail   TicketDetail @relation(fields: [ticketDetailId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
 }

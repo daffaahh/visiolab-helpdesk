@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 // Sesuaikan path import UI components lo
@@ -44,8 +44,10 @@ export default function LoginPage() {
         setError("Invalid email or password. Coba cek lagi.");
         setIsLoading(false);
       } else if (res?.ok) {
-        // Success -> Redirect ke dashboard
-        router.push("/admin/dashboard");
+        // Success -> Redirect sesuai role: internal ke /admin, client ke /portal
+        const session = await getSession();
+        const role = session?.user?.role;
+        router.push(role === "ADMIN" || role === "STAFF" ? "/admin/dashboard" : "/portal/dashboard");
       }
     } catch (err) {
       setError("System error. Coba beberapa saat lagi.");
