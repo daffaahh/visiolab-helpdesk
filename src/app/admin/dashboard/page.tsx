@@ -2,6 +2,9 @@ import { prisma } from "@/src/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Ticket, Users, Clock } from "lucide-react";
 
+// Selalu render on-demand (query DB live, bukan prerender saat build)
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
   // Logic Fortress: Tarik data secara paralel biar load-nya kencang
   const [totalTickets, pendingTickets, totalClients] = await Promise.all([

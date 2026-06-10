@@ -6,6 +6,8 @@ import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card";
 import { TicketForm } from "./ticket-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewTicketPage() {
   // Ambil opsi dropdown: client aktif + semua kategori (paralel biar ngebut)
   const [clients, categories] = await Promise.all([

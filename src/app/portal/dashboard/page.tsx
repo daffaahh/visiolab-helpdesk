@@ -20,6 +20,8 @@ const CATEGORY_VISUAL: Record<
 
 const FALLBACK = { icon: Palette, color: "text-slate-600", bg: "bg-slate-100", desc: "Permintaan jasa." };
 
+export const dynamic = "force-dynamic";
+
 export default async function ClientDashboard() {
   const [session, categories] = await Promise.all([
     getServerSession(authOptions),

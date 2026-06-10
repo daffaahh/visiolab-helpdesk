@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src
 import { ClientTicketForm } from "./client-ticket-form";
 import { createClientTicket } from "../actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewClientTicketPage({
   searchParams,
 }: {
