@@ -14,6 +14,8 @@ function parseTicketForm(formData: FormData) {
   const description = (formData.get("description") as string)?.trim() || "";
   const priority = (formData.get("priority") as string) || "MEDIUM";
   const categoryId = Number(formData.get("categoryId"));
+  const dueDateRaw = (formData.get("dueDate") as string) || "";
+  const dueDate = dueDateRaw ? new Date(dueDateRaw) : null;
 
   const referenceLinks = ((formData.get("referenceLinks") as string) || "")
     .split("\n")
@@ -27,7 +29,7 @@ function parseTicketForm(formData: FormData) {
   }
 
   const intent = (formData.get("intent") as string) || "submit";
-  return { title, description, priority, categoryId, referenceLinks, customFields, intent };
+  return { title, description, priority, categoryId, dueDate, referenceLinks, customFields, intent };
 }
 
 async function getClientId(): Promise<string | null> {
@@ -61,6 +63,7 @@ export async function createClientTicket(
       data: {
         title,
         priority: data.priority,
+        dueDate: data.dueDate,
         clientId,
         categoryId: data.categoryId,
         status: isDraft ? "DRAFT" : "PENDING",
@@ -116,6 +119,7 @@ export async function updateClientTicket(
       data: {
         title: data.title || "Untitled Draft",
         priority: data.priority,
+        dueDate: data.dueDate,
         categoryId: data.categoryId,
         status: isDraft ? "DRAFT" : "PENDING",
         detail: {

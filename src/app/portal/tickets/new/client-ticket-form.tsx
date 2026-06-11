@@ -20,6 +20,7 @@ type InitialData = {
   id?: string;
   title?: string;
   priority?: string;
+  dueDate?: string; // format YYYY-MM-DD
   description?: string;
   referenceLinks?: string[];
   customFields?: Record<string, string>;
@@ -86,6 +87,12 @@ export function ClientTicketForm({
             <option value="HIGH">HIGH</option>
             <option value="URGENT">URGENT</option>
           </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="dueDate" className="text-sm font-bold text-slate-900">Due Date</Label>
+          <Input id="dueDate" name="dueDate" type="date" defaultValue={initial?.dueDate} className={`${inputClass} [color-scheme:light]`} />
+          <p className="text-xs text-slate-400">Prioritas naik otomatis mendekati deadline.</p>
         </div>
 
         <div className="space-y-2 md:col-span-2">

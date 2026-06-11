@@ -7,6 +7,7 @@ import { prisma } from "@/src/lib/prisma";
 import { Card } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { ClientTicketRow } from "./ticket-row";
+import { effectivePriority, dueInfo } from "@/src/lib/ticket-priority";
 
 export default async function MyTicketsPage({
   searchParams,
@@ -34,6 +35,7 @@ export default async function MyTicketsPage({
         title: true,
         status: true,
         priority: true,
+        dueDate: true,
         createdAt: true,
         category: { select: { name: true } },
       },
@@ -41,6 +43,7 @@ export default async function MyTicketsPage({
   ]);
 
   const totalPages = Math.ceil(totalTickets / itemsPerPage);
+  const dateFmt = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" });
 
   return (
     <div className="space-y-6">
@@ -68,23 +71,24 @@ export default async function MyTicketsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {tickets.map((ticket) => (
-                <ClientTicketRow
-                  key={ticket.id}
-                  ticket={{
-                    id: ticket.id,
-                    title: ticket.title,
-                    status: ticket.status,
-                    priority: ticket.priority,
-                    dateLabel: new Intl.DateTimeFormat("id-ID", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    }).format(new Date(ticket.createdAt)),
-                    categoryName: ticket.category.name,
-                  }}
-                />
-              ))}
+              {tickets.map((ticket) => {
+                const due = dueInfo(ticket.dueDate);
+                return (
+                  <ClientTicketRow
+                    key={ticket.id}
+                    ticket={{
+                      id: ticket.id,
+                      title: ticket.title,
+                      status: ticket.status,
+                      priority: effectivePriority(ticket.priority, ticket.dueDate),
+                      dateLabel: dateFmt.format(new Date(ticket.createdAt)),
+                      dueLabel: due ? dateFmt.format(due.date) : null,
+                      dueOverdue: due?.overdue ?? false,
+                      categoryName: ticket.category.name,
+                    }}
+                  />
+                );
+              })}
 
               {tickets.length === 0 && (
                 <tr>

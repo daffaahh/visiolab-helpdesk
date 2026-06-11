@@ -31,6 +31,8 @@ export async function createTicket(
   const priority = (formData.get("priority") as string) || "MEDIUM";
   const clientId = formData.get("clientId") as string;
   const categoryId = Number(formData.get("categoryId"));
+  const dueDateRaw = formData.get("dueDate") as string;
+  const dueDate = dueDateRaw ? new Date(dueDateRaw) : null;
 
   if (!title || !description || !clientId || !categoryId) {
     return { error: "Title, client, category, dan description wajib diisi." };
@@ -54,6 +56,7 @@ export async function createTicket(
       data: {
         title,
         priority,
+        dueDate,
         clientId,
         categoryId,
         detail: {

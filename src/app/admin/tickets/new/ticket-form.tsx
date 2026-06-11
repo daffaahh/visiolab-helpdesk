@@ -64,6 +64,12 @@ export function TicketForm({
             <option value="HIGH">HIGH</option>
             <option value="URGENT">URGENT</option>
           </select>
+          <p className="text-xs text-slate-400">Otomatis naik HIGH (&lt;5 hari) / URGENT (&lt;3 hari) sesuai due date.</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="dueDate" className="text-sm font-bold text-slate-900">Due Date</Label>
+          <Input id="dueDate" name="dueDate" type="date" className={`${inputClass} [color-scheme:light]`} />
         </div>
 
         <div className="space-y-2 md:col-span-2">

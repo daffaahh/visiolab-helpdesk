@@ -49,6 +49,7 @@ model Ticket {
   title      String
   status     Status        @default(PENDING)
   priority   String        @default("MEDIUM")
+  dueDate    DateTime? // deadline; dipakai eskalasi prioritas otomatis
   clientId   String
   client     User          @relation(fields: [clientId], references: [id])
   categoryId Int

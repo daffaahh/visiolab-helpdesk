@@ -9,6 +9,7 @@ import { prisma } from "@/src/lib/prisma";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { CATEGORY_FIELDS } from "@/src/lib/ticket-categories";
+import { effectivePriority, dueInfo } from "@/src/lib/ticket-priority";
 import { MaybeLink } from "@/src/components/maybe-link";
 import { ReviewActions } from "./review-actions";
 
@@ -45,6 +46,11 @@ export default async function ClientTicketDetailPage({
   const customFields = (ticket.detail?.customFields as Record<string, string> | null) ?? null;
   const outputLinks = ticket.detail?.outputLinks ?? [];
   const canEdit = ticket.status === "DRAFT" || ticket.status === "PENDING";
+  const priority = effectivePriority(ticket.priority, ticket.dueDate);
+  const due = dueInfo(ticket.dueDate);
+  const dueLabel = due
+    ? new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(due.date)
+    : null;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -57,7 +63,10 @@ export default async function ClientTicketDetailPage({
         <div className="flex-1">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">{ticket.title}</h1>
           <p className="text-slate-500 text-sm mt-0.5">
-            {ticket.category.name} • Priority {ticket.priority}
+            {ticket.category.name} • Priority {priority}
+            {dueLabel && (
+              <span className={due?.overdue ? "text-red-600 font-medium" : ""}> • Due {dueLabel}{due?.overdue ? " (lewat)" : ""}</span>
+            )}
           </p>
         </div>
         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase border ${STATUS_BADGE[ticket.status]}`}>

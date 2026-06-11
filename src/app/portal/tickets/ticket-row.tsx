@@ -25,6 +25,8 @@ export type ClientTicketRowData = {
   status: Status;
   priority: string;
   dateLabel: string;
+  dueLabel: string | null;
+  dueOverdue: boolean;
   categoryName: string;
 };
 
@@ -39,6 +41,11 @@ export function ClientTicketRow({ ticket }: { ticket: ClientTicketRowData }) {
       <td className="px-6 py-4">
         <div className="font-bold text-slate-900">{ticket.title}</div>
         <div className="text-slate-400 text-xs mt-0.5">{ticket.dateLabel}</div>
+        {ticket.dueLabel && (
+          <div className={`text-xs mt-0.5 font-medium ${ticket.dueOverdue ? "text-red-600" : "text-rose-500"}`}>
+            Due {ticket.dueLabel}{ticket.dueOverdue ? " (lewat)" : ""}
+          </div>
+        )}
       </td>
       <td className="px-6 py-4 text-slate-700 font-medium">{ticket.categoryName}</td>
       <td className="px-6 py-4">

@@ -84,6 +84,7 @@ export default async function EditClientTicketPage({
               id: ticket.id,
               title: ticket.title,
               priority: ticket.priority,
+              dueDate: ticket.dueDate ? new Date(ticket.dueDate).toISOString().split("T")[0] : "",
               description: ticket.detail?.description ?? "",
               referenceLinks: ticket.detail?.referenceLinks ?? [],
               customFields: (ticket.detail?.customFields as Record<string, string> | null) ?? {},

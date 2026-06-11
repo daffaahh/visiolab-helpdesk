@@ -7,6 +7,7 @@ import { Card } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { TicketFilters } from "./ticket-filters";
 import { TicketRow } from "./ticket-row";
+import { effectivePriority, dueInfo } from "@/src/lib/ticket-priority";
 
 export default async function TicketsPage({
   searchParams,
@@ -42,12 +43,15 @@ export default async function TicketsPage({
         title: true,
         status: true,
         priority: true,
+        dueDate: true,
         createdAt: true,
         client: { select: { name: true, companyName: true } },
         category: { select: { name: true } },
       },
     }),
   ]);
+
+  const dateFmt = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" });
 
   const totalPages = Math.ceil(totalTickets / itemsPerPage);
   const buildHref = (page: number) => `?q=${query}&status=${statusFilter}&page=${page}`;
@@ -82,25 +86,26 @@ export default async function TicketsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {tickets.map((ticket) => (
-                <TicketRow
-                  key={ticket.id}
-                  ticket={{
-                    id: ticket.id,
-                    title: ticket.title,
-                    status: ticket.status,
-                    priority: ticket.priority,
-                    dateLabel: new Intl.DateTimeFormat("id-ID", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    }).format(new Date(ticket.createdAt)),
-                    clientName: ticket.client.name,
-                    clientCompany: ticket.client.companyName,
-                    categoryName: ticket.category.name,
-                  }}
-                />
-              ))}
+              {tickets.map((ticket) => {
+                const due = dueInfo(ticket.dueDate);
+                return (
+                  <TicketRow
+                    key={ticket.id}
+                    ticket={{
+                      id: ticket.id,
+                      title: ticket.title,
+                      status: ticket.status,
+                      priority: effectivePriority(ticket.priority, ticket.dueDate),
+                      dateLabel: dateFmt.format(new Date(ticket.createdAt)),
+                      dueLabel: due ? dateFmt.format(due.date) : null,
+                      dueOverdue: due?.overdue ?? false,
+                      clientName: ticket.client.name,
+                      clientCompany: ticket.client.companyName,
+                      categoryName: ticket.category.name,
+                    }}
+                  />
+                );
+              })}
 
               {tickets.length === 0 && (
                 <tr>
