@@ -15,9 +15,12 @@ export default function CustomLogoutPage() {
   const handleSignOut = () => {
     setIsLoggingOut(true);
     
-    // Logic Fortress: Hold eksekusi 3 detik buat UI feedback, baru lempar ke NextAuth
+    // Logic Fortress: Hold eksekusi 3 detik buat UI feedback, baru sign out.
+    // redirect:false biar NextAuth TIDAK redirect ke NEXTAUTH_URL (bisa localhost).
+    // Navigasi kita handle sendiri ke path relatif -> selalu ikut domain saat ini.
     setTimeout(async () => {
-      await signOut({ callbackUrl: "/login" });
+      await signOut({ redirect: false });
+      router.push("/login");
     }, 3000);
   };
 
