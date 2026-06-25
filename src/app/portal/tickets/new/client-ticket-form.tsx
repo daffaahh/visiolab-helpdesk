@@ -169,9 +169,9 @@ export function ClientTicketForm({
         </div>
       )}
 
-      <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
-        <Link href={cancelHref}>
-          <Button type="button" variant="outline" className="h-11 px-6 font-semibold border-slate-300 bg-white hover:bg-slate-100 text-slate-950 rounded-xl">
+      <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row sm:justify-end gap-3">
+        <Link href={cancelHref} className="w-full sm:w-auto">
+          <Button type="button" variant="outline" className="w-full sm:w-auto h-11 px-6 font-semibold border-slate-300 bg-white hover:bg-slate-100 text-slate-950 rounded-xl">
             Cancel
           </Button>
         </Link>
@@ -184,7 +184,7 @@ export function ClientTicketForm({
             formNoValidate
             disabled={pending}
             variant="outline"
-            className="h-11 px-6 font-semibold border-slate-300 bg-white hover:bg-slate-100 text-slate-700 rounded-xl"
+            className="w-full sm:w-auto h-11 px-6 font-semibold border-slate-300 bg-white hover:bg-slate-100 text-slate-700 rounded-xl"
           >
             <Save className="h-4 w-4 mr-2" /> Save as Draft
           </Button>
@@ -195,7 +195,7 @@ export function ClientTicketForm({
           name="intent"
           value="submit"
           disabled={pending}
-          className="h-11 px-8 font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-lg rounded-xl"
+          className="w-full sm:w-auto h-11 px-8 font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-lg rounded-xl"
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
           {pending ? "Menyimpan..." : submitLabel}

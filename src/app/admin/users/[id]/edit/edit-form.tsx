@@ -61,7 +61,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
 
   return (
     <Card className="border-slate-200 shadow-2xl overflow-hidden bg-white rounded-2xl">
-      <CardHeader className="bg-slate-50/70 border-b border-slate-100 px-8 py-6">
+      <CardHeader className="bg-slate-50/70 border-b border-slate-100 px-5 py-5 sm:px-8 sm:py-6">
         <div className="flex items-center gap-4">
           <div className="bg-amber-100/60 p-3 rounded-full border border-amber-200">
              <UserCog className="h-6 w-6 text-amber-600" />
@@ -77,7 +77,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
         </div>
       </CardHeader>
       
-      <CardContent className="p-8 space-y-8">
+      <CardContent className="p-5 sm:p-8 space-y-8">
         <form onSubmit={handleSubmit} autoComplete="off" className="space-y-8">
           {error && (
             <div className="flex items-center gap-2 p-4 text-sm font-semibold text-red-600 bg-red-50 border border-red-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
@@ -177,13 +177,13 @@ export default function EditUserForm({ user }: EditUserFormProps) {
             </div>
           )}
 
-          <div className="pt-8 mt-10 border-t border-slate-100 flex justify-end gap-4">
-            <Link href="/admin/users">
-              <Button type="button" variant="outline" className="h-12 px-8 text-base font-semibold border-slate-300 bg-white hover:bg-slate-100 text-slate-950 shadow-sm rounded-xl">
+          <div className="pt-8 mt-10 border-t border-slate-100 flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4">
+            <Link href="/admin/users" className="w-full sm:w-auto">
+              <Button type="button" variant="outline" className="w-full sm:w-auto h-12 px-8 text-base font-semibold border-slate-300 bg-white hover:bg-slate-100 text-slate-950 shadow-sm rounded-xl">
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={isLoading} className="h-12 px-8 text-base font-semibold bg-[#020618] hover:bg-[#020618]/90 text-white shadow-xl hover:shadow-2xl transition duration-150 rounded-xl">
+            <Button type="submit" disabled={isLoading} className="w-full sm:w-auto h-12 px-8 text-base font-semibold bg-[#020618] hover:bg-[#020618]/90 text-white shadow-xl hover:shadow-2xl transition duration-150 rounded-xl">
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               {isLoading ? "Updating..." : "Save Changes"}
             </Button>

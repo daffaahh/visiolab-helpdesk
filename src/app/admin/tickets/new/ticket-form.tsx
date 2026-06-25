@@ -154,13 +154,13 @@ export function TicketForm({
         </div>
       )}
 
-      <div className="pt-6 border-t border-slate-100 flex justify-end gap-4">
-        <Link href="/admin/tickets">
-          <Button type="button" variant="outline" className="h-11 px-8 font-semibold border-slate-300 bg-white hover:bg-slate-100 text-slate-950 rounded-xl">
+      <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4">
+        <Link href="/admin/tickets" className="w-full sm:w-auto">
+          <Button type="button" variant="outline" className="w-full sm:w-auto h-11 px-8 font-semibold border-slate-300 bg-white hover:bg-slate-100 text-slate-950 rounded-xl">
             Cancel
           </Button>
         </Link>
-        <Button type="submit" disabled={pending} className="h-11 px-8 font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-lg rounded-xl">
+        <Button type="submit" disabled={pending} className="w-full sm:w-auto h-11 px-8 font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-lg rounded-xl">
           {pending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
           {pending ? "Saving..." : "Create Ticket"}
         </Button>

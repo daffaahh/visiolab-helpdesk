@@ -26,20 +26,20 @@ export default async function NewTicketPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
-      <div className="flex items-center gap-6 border-b border-slate-100 pb-6">
+      <div className="flex items-center gap-4 sm:gap-6 border-b border-slate-100 pb-6">
         <Link href="/admin/tickets">
-          <Button variant="ghost" size="icon" className="h-12 w-12 text-slate-500 hover:text-slate-900 rounded-full bg-slate-100 hover:bg-slate-200">
+          <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-12 sm:w-12 shrink-0 text-slate-500 hover:text-slate-900 rounded-full bg-slate-100 hover:bg-slate-200">
             <ArrowLeft className="h-6 w-6" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-950">New Ticket</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950">New Ticket</h1>
           <p className="text-slate-600 mt-1">Buat permintaan pekerjaan baru atas nama klien.</p>
         </div>
       </div>
 
       <Card className="border-slate-200 shadow-xl overflow-hidden bg-white rounded-2xl">
-        <CardHeader className="bg-slate-50/70 border-b border-slate-100 px-8 py-6">
+        <CardHeader className="bg-slate-50/70 border-b border-slate-100 px-5 py-5 sm:px-8 sm:py-6">
           <div className="flex items-center gap-4">
             <div className="bg-blue-100/60 p-3 rounded-full border border-blue-200">
               <TicketPlus className="h-6 w-6 text-blue-600" />
@@ -52,7 +52,7 @@ export default async function NewTicketPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="p-5 sm:p-8">
           <TicketForm clients={clientOptions} categories={categories} />
         </CardContent>
       </Card>

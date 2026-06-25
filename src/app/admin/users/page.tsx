@@ -152,7 +152,7 @@ export default async function UsersManagementPage({
 
         {/* LOGIC FORTRESS: Server-Side Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 sm:px-6 py-4 border-t border-slate-200 bg-slate-50">
             <div className="text-sm text-slate-500 font-medium">
               Showing <span className="font-bold text-slate-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-slate-900">{Math.min(currentPage * itemsPerPage, totalUsers)}</span> of <span className="font-bold text-slate-900">{totalUsers}</span> results
             </div>
