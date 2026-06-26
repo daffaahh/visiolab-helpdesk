@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/src/lib/auth";
 import { prisma } from "@/src/lib/prisma";
 import bcrypt from "bcryptjs";
 
 // LOGIC FORTRESS: Endpoint buat Extend Contract (UPDATE)
 export async function PATCH(
-  req: Request, 
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Guard: cuma ADMIN yang boleh kelola user
+    const session = await getServerSession(authOptions);
+    if (session?.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await req.json();
     const { name, email, password, phone, role, companyName, activeUntil } = body;
     const { id } = await params; 
@@ -54,6 +62,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> } // <-- Update Tipe Data
 ) {
   try {
+    // Guard: cuma ADMIN yang boleh kelola user
+    const session = await getServerSession(authOptions);
+    if (session?.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     // Unpack (buka) promise params-nya pakai await
     const { id } = await params;
 
