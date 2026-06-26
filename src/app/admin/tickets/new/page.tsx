@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 import { ArrowLeft, TicketPlus } from "lucide-react";
 
+import { authOptions } from "@/src/lib/auth";
+import { lockedCategoriesForRole } from "@/src/lib/role-access";
 import { prisma } from "@/src/lib/prisma";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card";
@@ -9,6 +13,11 @@ import { TicketForm } from "./ticket-form";
 export const dynamic = "force-dynamic";
 
 export default async function NewTicketPage() {
+  // Role yang dikunci kategori (mis. DEVELOPER, DESIGNER) cuma eksekutor —
+  // tidak boleh bikin tiket. Tendang balik ke daftar tiket mereka.
+  const session = await getServerSession(authOptions);
+  if (lockedCategoriesForRole(session?.user?.role)) redirect("/admin/tickets");
+
   // Ambil opsi dropdown: client aktif + semua kategori (paralel biar ngebut)
   const [clients, categories] = await Promise.all([
     prisma.user.findMany({

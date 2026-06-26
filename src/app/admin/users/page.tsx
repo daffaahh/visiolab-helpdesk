@@ -1,7 +1,7 @@
 import { prisma } from "@/src/lib/prisma";
 import { Card } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
-import { Plus, Shield, User as UserIcon, CalendarX, CalendarCheck, Headset, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Shield, User as UserIcon, CalendarX, CalendarCheck, Headset, Code, Palette, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { UserActions } from "./user-action"; // <-- Pastikan namanya sesuai file lo kemaren (user-actions.tsx atau user-action.tsx)
 import { UserFilters } from "./user-filters"; // <-- Import Remote Control kita
@@ -96,6 +96,12 @@ export default async function UsersManagementPage({
                 } else if (user.role === 'STAFF') {
                   badgeStyle = 'bg-sky-50 text-sky-700 border-sky-200';
                   RoleIcon = Headset;
+                } else if (user.role === 'DEVELOPER') {
+                  badgeStyle = 'bg-violet-50 text-violet-700 border-violet-200';
+                  RoleIcon = Code;
+                } else if (user.role === 'DESIGNER') {
+                  badgeStyle = 'bg-pink-50 text-pink-700 border-pink-200';
+                  RoleIcon = Palette;
                 } else {
                   badgeStyle = 'bg-emerald-50 text-emerald-700 border-emerald-200';
                   RoleIcon = UserIcon;

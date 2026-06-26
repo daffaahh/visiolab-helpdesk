@@ -182,6 +182,8 @@ export default function AddUserPage() {
                     <option value="CLIENT">CLIENT</option>
                     <option value="ADMIN">ADMIN</option>
                     <option value="STAFF">STAFF</option>
+                    <option value="DEVELOPER">DEVELOPER</option>
+                    <option value="DESIGNER">DESIGNER</option>
                   </select>
                 </div>
               </div>

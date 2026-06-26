@@ -71,6 +71,35 @@ async function main() {
   })
   console.log('✅ Staff seeded (staff@visiolab.id)')
 
+  // 5. Developer — role internal yang di-scope ke kategori Web Development
+  await prisma.user.upsert({
+    where: { email: 'dev@visiolab.id' },
+    update: {},
+    create: {
+      email: 'dev@visiolab.id',
+      name: 'Tim Developer',
+      companyName: 'Visiolab',
+      role: 'DEVELOPER',
+      password: defaultPassword,
+    },
+  })
+  console.log('✅ Developer seeded (dev@visiolab.id)')
+
+  // 6. Designer — role internal yang di-scope ke Graphic Design, UI/UX,
+  //    3D & Animation, dan Flyer Event
+  await prisma.user.upsert({
+    where: { email: 'designer@visiolab.id' },
+    update: {},
+    create: {
+      email: 'designer@visiolab.id',
+      name: 'Tim Designer',
+      companyName: 'Visiolab',
+      role: 'DESIGNER',
+      password: defaultPassword,
+    },
+  })
+  console.log('✅ Designer seeded (designer@visiolab.id)')
+
   console.log('🚀 Seeding finished successfully!')
 }
 

@@ -10,6 +10,8 @@ enum Role {
   ADMIN
   CLIENT
   STAFF
+  DEVELOPER
+  DESIGNER
 }
 
 enum Status {

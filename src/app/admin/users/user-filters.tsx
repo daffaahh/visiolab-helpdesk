@@ -68,6 +68,8 @@ export function UserFilters() {
         <option value="ALL">All Roles</option>
         <option value="ADMIN">Admin</option>
         <option value="STAFF">Staff</option>
+        <option value="DEVELOPER">Developer</option>
+        <option value="DESIGNER">Designer</option>
         <option value="CLIENT">Client</option>
       </select>
     </div>

@@ -142,6 +142,8 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                   <option value="CLIENT">CLIENT</option>
                   <option value="STAFF">STAFF</option>
                   <option value="ADMIN">ADMIN</option>
+                  <option value="DEVELOPER">DEVELOPER</option>
+                  <option value="DESIGNER">DESIGNER</option>
                 </select>
               </div>
             </div>

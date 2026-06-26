@@ -7,7 +7,11 @@ import { Input } from "@/src/components/ui/input";
 
 const STATUS_OPTIONS = ["DRAFT", "PENDING", "IN_PROGRESS", "REVIEW", "REVISION", "DONE"];
 
-export function TicketFilters() {
+export function TicketFilters({
+  categories,
+}: {
+  categories: { id: number; name: string }[];
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -35,6 +39,17 @@ export function TicketFilters() {
           className="pl-9 border-slate-200 focus:border-blue-500 w-full bg-white shadow-sm text-slate-900 placeholder:text-slate-500"
         />
       </div>
+
+      <select
+        defaultValue={searchParams.get("category")?.toString() || "ALL"}
+        onChange={(e) => update("category", e.target.value)}
+        className="w-full sm:w-48 h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm outline-none transition-all"
+      >
+        <option value="ALL">All Categories</option>
+        {categories.map((c) => (
+          <option key={c.id} value={c.id}>{c.name}</option>
+        ))}
+      </select>
 
       <select
         defaultValue={searchParams.get("status")?.toString() || "ALL"}

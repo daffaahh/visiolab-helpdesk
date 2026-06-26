@@ -1,13 +1,16 @@
 import Link from "next/link";
+import { getServerSession } from "next-auth";
 import { Plus, Inbox, ChevronLeft, ChevronRight } from "lucide-react";
 import { Status } from "@prisma/client";
 
+import { authOptions } from "@/src/lib/auth";
 import { prisma } from "@/src/lib/prisma";
 import { Card } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { TicketFilters } from "./ticket-filters";
 import { TicketRow } from "./ticket-row";
 import { effectivePriority, dueInfo } from "@/src/lib/ticket-priority";
+import { lockedCategoriesForRole } from "@/src/lib/role-access";
 
 export default async function TicketsPage({
   searchParams,
@@ -17,10 +20,25 @@ export default async function TicketsPage({
   const sp = await searchParams;
   const query = sp.q || "";
   const statusFilter = sp.status || "";
+  const categoryFilter = sp.category || "";
   const currentPage = Number(sp.page) || 1;
   const itemsPerPage = 10;
 
+  // Role yang dikunci kategori (mis. DEVELOPER, DESIGNER) cuma boleh lihat
+  // tiket di kategorinya; ADMIN/STAFF lihat semua.
+  const session = await getServerSession(authOptions);
+  const lockedCategories = lockedCategoriesForRole(session?.user?.role);
+
+  // Filter kategori dari URL — hanya dihormati kalau masih dalam jatah role.
+  const picked = categoryFilter ? Number(categoryFilter) : null;
+  const pickedValid = picked !== null && (!lockedCategories || lockedCategories.includes(picked));
+
   const where: any = {};
+  if (pickedValid) {
+    where.categoryId = picked; // filter ke satu kategori
+  } else if (lockedCategories) {
+    where.categoryId = { in: lockedCategories }; // batas role
+  }
   if (statusFilter) where.status = statusFilter as Status;
   if (query) {
     where.OR = [
@@ -30,8 +48,9 @@ export default async function TicketsPage({
     ];
   }
 
-  // EFISIENSI: cuma ambil kolom header + nama relasi (TicketDetail tidak di-select)
-  const [totalTickets, tickets] = await Promise.all([
+  // EFISIENSI: cuma ambil kolom header + nama relasi (TicketDetail tidak di-select).
+  // Opsi dropdown kategori: dibatasi ke jatah role kalau dikunci.
+  const [totalTickets, tickets, categories] = await Promise.all([
     prisma.ticket.count({ where }),
     prisma.ticket.findMany({
       where,
@@ -49,12 +68,18 @@ export default async function TicketsPage({
         category: { select: { name: true } },
       },
     }),
+    prisma.category.findMany({
+      where: lockedCategories ? { id: { in: lockedCategories } } : {},
+      orderBy: { id: "asc" },
+      select: { id: true, name: true },
+    }),
   ]);
 
   const dateFmt = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" });
 
   const totalPages = Math.ceil(totalTickets / itemsPerPage);
-  const buildHref = (page: number) => `?q=${query}&status=${statusFilter}&page=${page}`;
+  const buildHref = (page: number) =>
+    `?q=${query}&status=${statusFilter}&category=${categoryFilter}&page=${page}`;
 
   return (
     <div className="space-y-6">
@@ -63,14 +88,16 @@ export default async function TicketsPage({
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Tickets</h1>
           <p className="text-slate-500 mt-1">Kelola semua permintaan pekerjaan dari klien.</p>
         </div>
-        <Link href="/admin/tickets/new">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md rounded-lg transition-all h-10 px-4">
-            <Plus className="mr-2 h-4 w-4" /> New Ticket
-          </Button>
-        </Link>
+        {!lockedCategories && (
+          <Link href="/admin/tickets/new">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md rounded-lg transition-all h-10 px-4">
+              <Plus className="mr-2 h-4 w-4" /> New Ticket
+            </Button>
+          </Link>
+        )}
       </div>
 
-      <TicketFilters />
+      <TicketFilters categories={categories} />
 
       <Card className="border-slate-200 shadow-sm overflow-hidden bg-white rounded-xl">
         <div className="overflow-x-auto min-h-[400px]">

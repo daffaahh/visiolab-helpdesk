@@ -7,6 +7,7 @@ import { prisma } from "@/src/lib/prisma";
 import { Card } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { ClientTicketRow } from "./ticket-row";
+import { ClientTicketFilters } from "./ticket-filters";
 import { effectivePriority, dueInfo } from "@/src/lib/ticket-priority";
 
 export default async function MyTicketsPage({
@@ -16,14 +17,18 @@ export default async function MyTicketsPage({
 }) {
   const sp = await searchParams;
   const currentPage = Number(sp.page) || 1;
+  const categoryFilter = sp.category || "";
   const itemsPerPage = 10;
 
   const session = await getServerSession(authOptions);
   const clientId = session?.user?.id;
 
-  const where = { clientId: clientId ?? "__none__" };
+  // Client cuma lihat tiketnya sendiri; opsional disaring per kategori.
+  const where: any = { clientId: clientId ?? "__none__" };
+  const picked = categoryFilter ? Number(categoryFilter) : null;
+  if (picked) where.categoryId = picked;
 
-  const [totalTickets, tickets] = await Promise.all([
+  const [totalTickets, tickets, categories] = await Promise.all([
     prisma.ticket.count({ where }),
     prisma.ticket.findMany({
       where,
@@ -40,6 +45,7 @@ export default async function MyTicketsPage({
         category: { select: { name: true } },
       },
     }),
+    prisma.category.findMany({ orderBy: { id: "asc" }, select: { id: true, name: true } }),
   ]);
 
   const totalPages = Math.ceil(totalTickets / itemsPerPage);
@@ -58,6 +64,8 @@ export default async function MyTicketsPage({
           </Button>
         </Link>
       </div>
+
+      <ClientTicketFilters categories={categories} />
 
       <Card className="border-slate-200 shadow-sm overflow-hidden bg-white rounded-xl">
         <div className="overflow-x-auto min-h-[400px]">
@@ -110,7 +118,7 @@ export default async function MyTicketsPage({
               <span className="font-bold text-slate-900">{totalTickets}</span> tickets
             </div>
             <div className="flex items-center gap-2">
-              <Link href={`?page=${currentPage > 1 ? currentPage - 1 : 1}`}>
+              <Link href={`?category=${categoryFilter}&page=${currentPage > 1 ? currentPage - 1 : 1}`}>
                 <Button variant="outline" size="sm" disabled={currentPage <= 1} className="h-8">
                   <ChevronLeft className="h-4 w-4 mr-1" /> Prev
                 </Button>
@@ -118,7 +126,7 @@ export default async function MyTicketsPage({
               <div className="text-sm font-semibold text-slate-700 px-2">
                 Page {currentPage} of {totalPages}
               </div>
-              <Link href={`?page=${currentPage < totalPages ? currentPage + 1 : totalPages}`}>
+              <Link href={`?category=${categoryFilter}&page=${currentPage < totalPages ? currentPage + 1 : totalPages}`}>
                 <Button variant="outline" size="sm" disabled={currentPage >= totalPages} className="h-8">
                   Next <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>

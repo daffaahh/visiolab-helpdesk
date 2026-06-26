@@ -6,6 +6,8 @@ import { useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+import { isInternalRole } from "@/src/lib/role-access";
+
 // Sesuaikan path import UI components lo
 import { AnimatedBackground } from "@/src/components/ui/animated-background";
 import { Button } from "@/src/components/ui/button";
@@ -47,7 +49,7 @@ export default function LoginPage() {
         // Success -> Redirect sesuai role: internal ke /admin, client ke /portal
         const session = await getSession();
         const role = session?.user?.role;
-        router.push(role === "ADMIN" || role === "STAFF" ? "/admin/dashboard" : "/portal/dashboard");
+        router.push(isInternalRole(role) ? "/admin/dashboard" : "/portal/dashboard");
       }
     } catch (err) {
       setError("System error. Coba beberapa saat lagi.");

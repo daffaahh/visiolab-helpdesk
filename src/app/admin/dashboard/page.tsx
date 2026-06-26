@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/lib/auth";
+import { lockedCategoriesForRole } from "@/src/lib/role-access";
 import { prisma } from "@/src/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Ticket, Users, Clock } from "lucide-react";
@@ -8,22 +9,33 @@ import { Ticket, Users, Clock } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
+  const session = await getServerSession(authOptions);
+  const role = session?.user?.role;
+
+  // Role yang dikunci kategori (mis. DEVELOPER, DESIGNER) cuma hitung tiket
+  // dalam jatah kategorinya.
+  const lockedCategories = lockedCategoriesForRole(role);
+  const ticketWhere = lockedCategories ? { categoryId: { in: lockedCategories } } : {};
+
   // Logic Fortress: Tarik data secara paralel biar load-nya kencang
-  const [session, totalTickets, pendingTickets, totalClients] = await Promise.all([
-    getServerSession(authOptions),
-    prisma.ticket.count(),
-    prisma.ticket.count({ where: { status: "PENDING" } }),
+  const [totalTickets, pendingTickets, totalClients] = await Promise.all([
+    prisma.ticket.count({ where: ticketWhere }),
+    prisma.ticket.count({ where: { ...ticketWhere, status: "PENDING" } }),
     prisma.user.count({ where: { role: "CLIENT" } })
   ]);
 
   // Nama akun yang login (fallback "there" kalau session belum kebaca)
   const name = session?.user?.name ?? "there";
-  const isStaff = session?.user?.role === "STAFF";
 
-  // Copywriting beda per role: admin lihat status agency, staff fokus ke tiket
-  const subtitle = isStaff
-    ? `Welcome back, ${name}. Here are the tickets that need your attention.`
-    : `Welcome back, ${name}. Here is your agency's current status.`;
+  // Copywriting per role: admin lihat status agency, eksekutor fokus ke tiketnya
+  let subtitle: string;
+  if (lockedCategories) {
+    subtitle = `Welcome back, ${name}. Here are your assigned tickets.`;
+  } else if (role === "STAFF") {
+    subtitle = `Welcome back, ${name}. Here are the tickets that need your attention.`;
+  } else {
+    subtitle = `Welcome back, ${name}. Here is your agency's current status.`;
+  }
 
   return (
     <div className="space-y-8">

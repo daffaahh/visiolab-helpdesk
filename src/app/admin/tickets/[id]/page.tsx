@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
 import { ArrowLeft, PackageCheck, RotateCcw, Send } from "lucide-react";
 import { Status } from "@prisma/client";
 
+import { authOptions } from "@/src/lib/auth";
+import { lockedCategoriesForRole } from "@/src/lib/role-access";
 import { prisma } from "@/src/lib/prisma";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
@@ -38,6 +41,12 @@ export default async function TicketDetailPage({
   });
 
   if (!ticket) notFound();
+
+  // Role yang dikunci kategori (mis. DEVELOPER, DESIGNER) tidak boleh buka tiket
+  // di luar jatah kategorinya — walau nebak URL-nya. Perlakukan seperti tidak ada.
+  const session = await getServerSession(authOptions);
+  const lockedCategories = lockedCategoriesForRole(session?.user?.role);
+  if (lockedCategories && !lockedCategories.includes(ticket.categoryId)) notFound();
 
   const fieldLabels = Object.fromEntries(
     (CATEGORY_FIELDS[ticket.category.id] ?? []).map((f) => [f.name, f.label])
